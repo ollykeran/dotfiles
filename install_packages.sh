@@ -31,17 +31,21 @@ if [ "$(id -u)" == 0 ]; then
 
 
     # install nvim
-    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    sudo rm -rf /opt/nvim
-    sudo tar -C /opt -xzf nvim-linux64.tar.gz
-    rm nvim-linux64.tar.gz
+    if ! command -v nvim &>/dev/null; then
+        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+        sudo rm -rf /opt/nvim
+        sudo tar -C /opt -xzf nvim-linux64.tar.gz
+        rm nvim-linux64.tar.gz
+    fi
 
+    if ! command -v lazygit &>/dev/null; then
     LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
     curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
     tar xf /tmp/lazygit.tar.gz /tmp/lazygit
     sudo install /tmp/lazygit /usr/local/bin
     echo "Lazygit installed from src" 
     rm -rf /tmp/lazygit* 
+    fi
 
     echo "Package installation completed."
 else 
