@@ -7,3 +7,4 @@ net-tools
 ripgrep
 bind-utils
 rsync
+fzf

@@ -24,7 +24,7 @@ fi
 if [ -d "$HOME/support/sjr" ]; then 
     PATH="$HOME/support/sjr:$PATH"
 fi 
-if [ -f "/opt/nvim-linux64/bin" ]; then 
+if [ -d "/opt/nvim-linux64/bin" ]; then 
     PATH="/opt/nvim-linux64/bin:$PATH"
 fi 
 export PATH
