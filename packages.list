@@ -1,0 +1,9 @@
+epel-release
+ranger
+htop 
+iotop
+mlocate
+net-tools
+ripgrep
+bind-utils
+rsync

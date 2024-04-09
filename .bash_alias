@@ -1,0 +1,61 @@
+alias vi=vim
+alias svi='sudo vi'
+
+# Stop after sending count ECHO_REQUEST packets #
+alias ping='ping -c 5'
+# Do not wait interval 1 second, go fast #
+alias fastping='ping -c 100 -s.2'
+
+#dirs
+alias ls='ls -al --color -h --group-directories-first'
+alias ..="cd .."
+alias ...="cd .. && cd .."
+
+#show deletes
+alias rmdir="rm -rfvI"
+alias rm="rm -vI"
+
+### lgx
+alias jr='journal_report'
+alias mr='movements_report'
+alias mhc='mhe_control_screen'
+alias picks='asps_picks_report'
+alias fe='file_editor 132'
+alias fv='file_viewer 132'
+alias fm='file_monitor'
+alias djt='db_jrn_track'
+alias djs='db_jrn_stat'
+alias djc='db_jrn_procid'
+
+
+alias top10="history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -10"
+alias dmesgtime='dmesg | sed -r 's#^\[([0-9]+\.[0-9]+)\](.*)#echo -n "[";echo -n $(date --date="@$(echo "$(grep btime /proc/stat|cut -d " " -f 2)+\1" | bc)" +"%c");echo -n "]";echo -n "\2"#e''
+
+
+# disk
+alias du='du -h'
+alias df='df -h'
+
+# less w/ colours
+alias less="less -r -N"
+
+#ports
+alias ports='netstat -natp'
+
+#count files
+alias countfiles='find . -type f | wc -l'
+
+alias locate="locate -i"
+alias man="man -a"
+alias ps="ps -wef f"
+alias pgrep="pgrep -af"
+
+alias sl="ls -al --color -h --group-directories-first"
+#gets largest files
+alias ducks="du -cksh --threshold=1G * | sort -rn"
+#for when the ducks failed 
+alias duck="for i in G M K; do    du -ah | grep [0-9]$i | sort -nr -k 1; done | head -n 11"
+#less end of file
+alias end="less +G -N"
+#follow 
+alias follow="less +F -N"
