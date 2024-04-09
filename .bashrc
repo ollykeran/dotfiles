@@ -29,3 +29,4 @@ fi
 if [[ -f /tmp/standby_system_$gid ]]; then
     PS1=$standby
 fi
+eval $(ssh-agent) && ssh-add ~/.ssh/*.priv
