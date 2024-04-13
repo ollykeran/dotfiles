@@ -1,11 +1,11 @@
---- 
+---
 - name: dotfile setup
-  hosts: localhost #setup other machines from one src ahead of time? 
-  vars_files: 
+  hosts: localhost #setup other machines from one src ahead of time?
+  vars_files:
     - dependencies.yml
-  pre_tasks: 
+  pre_tasks:
     - name: Check if Neovim is installed
-      command: nvim --version
+      command: /opt/nvim-linux64/bin/nvim --version
       register: nvim_check
       ignore_errors: true
 
@@ -14,14 +14,14 @@
       register: lazygit
       ignore_errors: true
 
-  tasks: 
+  tasks:
   - name: Install packages
     become: yes
-    package: 
-      name: "{{ item }}" 
+    package:
+      name: "{{ item }}"
       state: present
-    with_items: "{{ packages }}"
-    ignore_errors: true
+      with_items: "{{ packages }}"
+    ignore_errors: true 
 
   - name: Install Neovim if not installed
     become: yes
@@ -50,29 +50,28 @@
           state: absent
 
       - name: Install packer
-        shell: git clone --depth 1 https://github.com/wbthomason/packer.nvim  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-      
-      - name: PackerSync
-        shell: nvim -c PackerSync
+        become: no
+        shell: git clone --depth 1 https://github.com/wbthomason/packer.nvim  $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
 
     when: nvim_check.rc != 0
 
-  - name: Install lazygit 
+  - name: Install lazygit
     become: yes
-    block: 
-    - name: Get latest Lazygit version
-      uri:
-        url: "https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
-        return_content: yes
-      register: lazygit_release_info      
+    block:
+    # - name: Get latest Lazygit version
+    #   uri:
+    #     url: "https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
+    #     return_content: yes
+    #   register: lazygit_release_info
 
-    - name: Extract Lazygit version
-      set_fact:
-        lazygit_version: "{{ lazygit_release_info.json.tag_name }}"
+    # - name: Extract Lazygit version
+    #   set_fact:
+    #     lazygit_version: "{{ lazygit_release_info.json.tag_name }}"
 
     - name: Download Lazygit binary
+      ## for some reason newest doesnt have 64 bit release so using static link for 0.40.2
       get_url:
-        url: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_{{ lazygit_version }}_Linux_x86_64.tar.gz"
+        url: "https://github.com/jesseduffield/lazygit/releases/download/v0.40.2/lazygit_0.40.2_Linux_x86_64.tar.gz"
         dest: "/opt/lazygit.tar.gz"
 
     - name: Extract Lazygit binary
