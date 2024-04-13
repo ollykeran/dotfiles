@@ -5,7 +5,7 @@ dotdir="$HOME/dotfiles"
 [ -z "$PS1" ] && return
 
 . "$dotdir"/.bash_alias
-. "$dotdir"/.bash_profile
+#. "$dotdir"/.bash_profile
 . "$dotdir"/.bash_functions
 
 if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -29,4 +29,5 @@ fi
 if [[ -f /tmp/standby_system_$gid ]]; then
     PS1=$standby
 fi
-eval $(ssh-agent) && ssh-add ~/.ssh/*.priv
+
+eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l -E md5  

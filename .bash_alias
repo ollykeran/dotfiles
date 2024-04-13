@@ -27,7 +27,6 @@ alias djt='db_jrn_track'
 alias djs='db_jrn_stat'
 alias djc='db_jrn_procid'
 
-
 #alias top10="history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -10"
 #alias dmesgtime='dmesg | sed -r 's#^\[([0-9]+\.[0-9]+)\](.*)#echo -n "[";echo -n $(date --date="@$(echo "$(grep btime /proc/stat|cut -d " " -f 2)+\1" | bc)" +"%c");echo -n "]";echo -n "\2"#e''
 

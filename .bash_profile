@@ -1,3 +1,5 @@
+# for some reason .bash_profile is the entry point on debian
+. .bashrc
 # append to the history file, don't overwrite it
 shopt -s histappend
 HISTSIZE=100000
@@ -8,7 +10,6 @@ shopt -s autocd
 shopt -s cdspell
 shopt -s dirspell
 shopt -s checkwinsize
-
 
 
 # set PATH so it includes user bin if it exists

@@ -8,3 +8,5 @@ ripgrep
 bind-utils
 rsync
 fzf
+stow
+sysstat
