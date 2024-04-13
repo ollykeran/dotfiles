@@ -2,6 +2,4 @@
 
 stow -D .
 
-stow --ignore='.*\.sh$|^\.git|\.list$|.*\.md$' .
-
-#use stow -D . to unlink
+stow --ignore='.*\.sh$|^\.git|\.list$|.*\.md$|.*\.yml$' .

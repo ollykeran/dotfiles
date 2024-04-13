@@ -1,0 +1,84 @@
+--- 
+- name: dotfile setup
+  hosts: localhost #setup other machines from one src ahead of time? 
+  vars_files: 
+    - dependencies.yml
+  pre_tasks: 
+    - name: Check if Neovim is installed
+      command: nvim --version
+      register: nvim_check
+      ignore_errors: true
+
+    - name: Check if LazyGit is installed
+      command: lazygit --version
+      register: lazygit
+      ignore_errors: true
+
+  tasks: 
+  - name: Install packages
+    become: yes
+    package: 
+      name: "{{ item }}" 
+      state: present
+    with_items: "{{ packages }}"
+    ignore_errors: true
+
+  - name: Install Neovim if not installed
+    become: yes
+    block:
+      - name: Download Neovim
+        get_url:
+          url: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+          dest: /opt/nvim-linux64.tar.gz
+
+      - name: Remove existing Neovim directory
+        file:
+          path: /opt/nvim
+          state: absent
+        become: yes
+
+      - name: Extract Neovim archive
+        unarchive:
+          src: /opt/nvim-linux64.tar.gz
+          dest: /opt/
+          remote_src: yes
+        become: yes
+
+      - name: Remove Neovim archive
+        file:
+          path: /tmp/nvim-linux64.tar.gz
+          state: absent
+
+      - name: Install packer
+        shell: git clone --depth 1 https://github.com/wbthomason/packer.nvim  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+      
+      - name: PackerSync
+        shell: nvim -c PackerSync
+
+    when: nvim_check.rc != 0
+
+  - name: Install lazygit 
+    become: yes
+    block: 
+    - name: Get latest Lazygit version
+      uri:
+        url: "https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
+        return_content: yes
+      register: lazygit_release_info      
+
+    - name: Extract Lazygit version
+      set_fact:
+        lazygit_version: "{{ lazygit_release_info.json.tag_name }}"
+
+    - name: Download Lazygit binary
+      get_url:
+        url: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_{{ lazygit_version }}_Linux_x86_64.tar.gz"
+        dest: "/opt/lazygit.tar.gz"
+
+    - name: Extract Lazygit binary
+      ansible.builtin.command: "tar xf /opt/lazygit.tar.gz -C /opt/"
+
+    - name: Install Lazygit
+      ansible.builtin.command: "sudo install /opt/lazygit /usr/local/bin"
+
+    when: lazygit.rc != 0

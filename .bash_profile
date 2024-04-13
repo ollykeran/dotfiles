@@ -28,6 +28,10 @@ fi
 if [ -d "/opt/nvim-linux64/bin" ]; then 
     PATH="/opt/nvim-linux64/bin:$PATH"
 fi 
+if [ -d "$HOME/.local/bin" ]; then 
+    PATH="$HOME/.local/bin:$PATH"
+fi 
+
 export PATH
 
 export EDITOR=nvim

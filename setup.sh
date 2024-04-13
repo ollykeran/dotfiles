@@ -1,5 +1,7 @@
 #!/bin/bash
 
-sudo ./install_packages.sh
+pip install ansible
+
+ansible-playbook setup.yml -K 
 
 ./stow.sh
