@@ -1,12 +1,10 @@
 #!/bin/bash
 
-dotdir="$HOME/dotfiles"
-
 [ -z "$PS1" ] && return
 
-. "$dotdir"/.bash_alias
+. .bash_alias
 #. "$dotdir"/.bash_profile
-. "$dotdir"/.bash_functions
+. bash_functions
 
 if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion

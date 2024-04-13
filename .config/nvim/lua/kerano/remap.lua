@@ -7,6 +7,6 @@ vim.keymap.set("i", "<C-s>", vim.cmd.write)
 
 -- make Ctrl Z in insert behave like Ctrl U in normal
 -- for undoing without leaving insert mode
-vim.keymap.set('i', '<C-z>', '<C-o>u', {noremap = true})
+vim.keymap.set("i", "<C-z>", "<C-o>u", {noremap = true})
 -- Ctrl R redo to work in insert mode	
-vim.keymap.set('i', '<C-r>', '<C-o>r', {noremap = true})
+vim.keymap.set("i", "<C-r>", "<C-o>r", {noremap = true})
