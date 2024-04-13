@@ -1,4 +1,5 @@
-alias vi=vim
+alias vi=nvim
+alias vim=nvim
 alias svi='sudo vi'
 
 # Stop after sending count ECHO_REQUEST packets #

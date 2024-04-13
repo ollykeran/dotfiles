@@ -30,7 +30,7 @@ if [ -d "/opt/nvim-linux64/bin" ]; then
 fi 
 export PATH
 
-export EDITOR=/usr/bin/vim
+export EDITOR=nvim
 
 
 # Normal Colors

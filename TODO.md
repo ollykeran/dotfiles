@@ -1,0 +1,13 @@
+- starship setup and prompt
+- nvim continuance
+    - LSP 
+    - Spellcheck
+- diff isntall list for deb vs rhel
+    - do install with ansible? 
+    - can do all setup stuff    
+- .gitconfig_global
+    - how to diff work vs home? 
+- tmux .tmux_local.conf
+- .config/lazygit remaps to vim motions
+- .config/ranger remaps
+- .vscode configs?
