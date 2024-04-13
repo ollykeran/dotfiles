@@ -1,4 +1,5 @@
 epel-release
+tmux
 ranger
 htop 
 iotop

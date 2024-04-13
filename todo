@@ -1,0 +1,11 @@
+- starship setup and prompt
+- nvim continuance
+    - ranger to replace netrw
+- vim remap caps_lock to esc
+- diff isntall list for deb vs rhel
+    - do install with ansible? 
+    - can do all setup stuff
+- .gitconfig_global? 
+- tmux .tmux_local.conf
+- lazygit remaps to vim motions
+- .vscode configs
