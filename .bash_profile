@@ -31,6 +31,9 @@ fi
 if [ -d "$HOME/.local/bin" ]; then 
     PATH="$HOME/.local/bin:$PATH"
 fi 
+if [ -d "$HOME/.local/share/luals/bin" ]; then 
+    PATH="$HOME/.local/share/luals/bin:$PATH"
+fi 
 
 export PATH
 
