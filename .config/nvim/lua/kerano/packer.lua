@@ -13,10 +13,10 @@ return require("packer").startup(function(use)
 	use ({
 		"EdenEast/nightfox.nvim",
 		as = "nightfox",
-	        config = function()
-        		vim.cmd("colorscheme nightfox")
+			config = function()
+				vim.cmd("colorscheme nightfox")
         	end
-        })
+	})
 
 	use ("nvim-treesitter/nvim-treesitter", {run = ":TSUpdate"})
 	use ("theprimeagen/harpoon")
@@ -24,4 +24,5 @@ return require("packer").startup(function(use)
 	use("kdheepak/lazygit.nvim")
 	use("francoiscabrol/ranger.vim")
 	use("rbgrouleff/bclose.vim")
+	use("vim-airline/vim-airline")
 end)

@@ -4,7 +4,7 @@
 
 . .bash_alias
 #. "$dotdir"/.bash_profile
-. bash_functions
+. .bash_functions
 
 if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
