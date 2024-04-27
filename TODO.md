@@ -1,4 +1,8 @@
-- starship setup and prompt
+- starship prompt
+    - ssh keys
+    - langs 
+    - ssh remote envs
+    - warp 
 - nvim
     - LSP
         - change remaps for autocomplete
@@ -16,3 +20,4 @@
 - .config/lazygit remaps to vim motions
 - .config/ranger remaps
 - .vscode configs?
+- global git config username and email

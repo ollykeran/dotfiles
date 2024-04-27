@@ -2,7 +2,7 @@
 - name: dotfile setup
   hosts: localhost #setup other machines from one src ahead of time?
   vars_files:
-    - dependencies.yml
+    - ./dependencies.yml
   pre_tasks:
     - name: Check if Neovim is installed
       command: /opt/nvim-linux64/bin/nvim --version
@@ -25,7 +25,7 @@
     package:
       name: "{{ item }}"
       state: present
-      with_items: "{{ packages }}"
+    with_items: "{{ packages }}"
     ignore_errors: true 
 
   - name: Install Neovim if not installed
@@ -86,9 +86,18 @@
       ansible.builtin.command: "sudo install /opt/lazygit /usr/local/bin"
 
     when: lazygit.rc != 0
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
   - name: Install starship
     become: yes 
     shell: curl -sS https://starship.rs/install.sh | sh
     when: starship_check.rc != 0
 
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes

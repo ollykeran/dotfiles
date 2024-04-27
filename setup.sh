@@ -2,7 +2,7 @@
 
 pip install ansible
 
-ansible-playbook setup.yml -K 
+$HOME/.local/bin/ansible-playbook setup.yml -K 
 
 ./stow.sh
 

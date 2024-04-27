@@ -2,6 +2,12 @@ alias vi=nvim
 alias vim=nvim
 alias svi='sudo vi'
 
+# virt-manager testing 
+alias virt-europa="virt-manager -c qemu+ssh://root@europa/system"
+alias virt-callisto="virt-manager -c qemu+ssh://root@callisto/system"
+alias virt-atlas="virt-manager -c qemu+ssh://root@atlas/system"
+
+
 # Stop after sending count ECHO_REQUEST packets #
 alias ping='ping -c 5'
 # Do not wait interval 1 second, go fast #
@@ -58,3 +64,4 @@ alias duck="for i in G M K; do    du -ah | grep [0-9]$i | sort -nr -k 1; done | 
 alias end="less +G -N"
 #follow 
 alias follow="less +F -N"
+alias explorer="explorer.exe ."
