@@ -29,3 +29,4 @@ if [[ -f /tmp/standby_system_$gid ]]; then
 fi
 
 eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l -E md5  
+eval "$(starship init bash)"

@@ -35,7 +35,7 @@ vim.opt.incsearch = true
 vim.opt.termguicolors = true
 
 -- scroll
-vim.opt.scrolloff = 4 
+vim.opt.scrolloff = 10 
 vim.opt.signcolumn = "yes"
 
 -- update fast 

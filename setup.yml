@@ -14,6 +14,11 @@
       register: lazygit
       ignore_errors: true
 
+    - name: Check if Starship is installed
+      command: starship --version 
+      register: starship_check
+      ignore_errors: true
+
   tasks:
   - name: Install packages
     become: yes
@@ -81,3 +86,9 @@
       ansible.builtin.command: "sudo install /opt/lazygit /usr/local/bin"
 
     when: lazygit.rc != 0
+
+  - name: Install starship
+    become: yes 
+    shell: curl -sS https://starship.rs/install.sh | sh
+    when: starship_check.rc != 0
+
