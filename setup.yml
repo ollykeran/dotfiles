@@ -86,18 +86,9 @@
       ansible.builtin.command: "sudo install /opt/lazygit /usr/local/bin"
 
     when: lazygit.rc != 0
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 
   - name: Install starship
     become: yes 
-    shell: curl -sS https://starship.rs/install.sh | sh
+    shell: curl -sS https://starship.rs/install.sh | sh -s -- -y
     when: starship_check.rc != 0
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
