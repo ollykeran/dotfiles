@@ -2,4 +2,4 @@
 
 stow -D .
 
-stow --ignore='.*\.sh$|^\.git|\.list$|.*\.md$|.*\.yml$' .
+stow --ignore='.*\.sh$|^\.git|\.list$|.*\.md$|.*\.yml$|.*\.ini$' .
