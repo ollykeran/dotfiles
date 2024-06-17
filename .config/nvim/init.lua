@@ -1,7 +1,7 @@
 require("kerano")
 
 -- vim opts 
-
+vim.api.nvim_set_option("clipboard","unnamed")
 -- fat block in insert mode
 vim.opt.guicursor = ""
 
