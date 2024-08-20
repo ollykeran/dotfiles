@@ -30,3 +30,6 @@ fi
 
 eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l -E md5  
 eval "$(starship init bash)"
+eval "$(zoxide init bash)"
+alias ls='exa -al'
+neofetch
