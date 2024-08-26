@@ -2,9 +2,10 @@
 
 [ -z "$PS1" ] && return
 
-. .bash_alias
+. ~/.bash_alias
+
 #. "$dotdir"/.bash_profile
-. .bash_functions
+. ~/.bash_functions
 
 if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
@@ -28,6 +29,7 @@ if [[ -f /tmp/standby_system_$gid ]]; then
     PS1=$standby
 fi
 
+#export PATH=$PATH:/usr/bin/go
 eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l -E md5  
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
