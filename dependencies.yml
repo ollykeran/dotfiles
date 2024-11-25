@@ -16,3 +16,4 @@ packages:
   - nmon
   - eza
   - zoxide
+  - stow

@@ -4,7 +4,7 @@ require("kerano")
 vim.api.nvim_set_option("clipboard","unnamed")
 -- fat block in insert mode
 vim.opt.guicursor = ""
-
+vim.opt.clipboard = "unnamed"
 -- line nums
 vim.wo.relativenumber = true
 vim.wo.number = true	
@@ -14,7 +14,6 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
-
 vim.opt.smartindent = true
 
 vim.opt.wrap = false
