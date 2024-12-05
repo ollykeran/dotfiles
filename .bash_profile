@@ -1,5 +1,5 @@
 # for some reason .bash_profile is the entry point on debian
-. .bashrc
+. ~/.bashrc
 # append to the history file, don't overwrite it
 shopt -s histappend
 HISTSIZE=100000
@@ -13,18 +13,6 @@ shopt -s checkwinsize
 
 
 # set PATH so it includes user bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
-if [ -d "$HOME/support" ]; then 
-    PATH="$HOME/support:$PATH"
-fi 
-if [ -d "$HOME/support/api" ]; then 
-    PATH="$HOME/support/api:$PATH"
-fi 
-if [ -d "$HOME/support/sjr" ]; then 
-    PATH="$HOME/support/sjr:$PATH"
-fi 
 if [ -d "/opt/nvim-linux64/bin" ]; then 
     PATH="/opt/nvim-linux64/bin:$PATH"
 fi 
@@ -35,10 +23,10 @@ if [ -d "$HOME/.local/share/luals/bin" ]; then
     PATH="$HOME/.local/share/luals/bin:$PATH"
 fi 
 
+PATH="$PATH:/usr/local/bin:/usr/local/go/bin"
 export PATH
 
 export EDITOR=nvim
-
 
 # Normal Colors
 Black='\e[0;30m'        # Black
