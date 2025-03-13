@@ -1,9 +1,9 @@
 # for some reason .bash_profile is the entry point on debian
-. .bashrc
+. ~/.bashrc
 # append to the history file, don't overwrite it
 shopt -s histappend
-HISTSIZE=100000
-HISTFILESIZE=200000
+HISTSIZE=10000000
+HISTFILESIZE=2000000
 HISTTIMEFORMAT="%d/%m/%y %T "
 
 shopt -s autocd
@@ -34,6 +34,10 @@ fi
 if [ -d "$HOME/.local/share/luals/bin" ]; then 
     PATH="$HOME/.local/share/luals/bin:$PATH"
 fi 
+
+PATH="/opt/OpenWebStart:$PATH"
+PATH="$HOME/.cargo/bin:$PATH"
+PATH="$HOME/go/bin:$PATH"
 
 export PATH
 

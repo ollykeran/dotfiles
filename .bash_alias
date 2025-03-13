@@ -14,7 +14,7 @@ alias ping='ping -c 5'
 alias fastping='ping -c 100 -s.2'
 
 #dirs
-alias ls='ls -al --color -h --group-directories-first'
+alias ls='eza -al --color -h --group-directories-first'
 alias ..="cd .."
 alias ...="cd .. && cd .."
 
@@ -65,3 +65,11 @@ alias end="less +G -N"
 #follow 
 alias follow="less +F -N"
 alias explorer="explorer.exe ."
+
+alias uppies="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
+
+alias ssh="ssh.exe"
+alias ssh-add="ssh-add.exe"
+
+alias webstart="javaws"
+alias plz="sudo !!"
