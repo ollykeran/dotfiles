@@ -16,18 +16,6 @@ alias ...="cd .. && cd .."
 alias rmdir="rm -rfvI"
 alias rm="rm -vI"
 
-### lgx
-alias jr='journal_report'
-alias mr='movements_report'
-alias mhc='mhe_control_screen'
-alias picks='asps_picks_report'
-alias fe='file_editor 132'
-alias fv='file_viewer 132'
-alias fm='file_monitor'
-alias djt='db_jrn_track'
-alias djs='db_jrn_stat'
-alias djc='db_jrn_procid'
-
 #alias top10="history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -10"
 #alias dmesgtime='dmesg | sed -r 's#^\[([0-9]+\.[0-9]+)\](.*)#echo -n "[";echo -n $(date --date="@$(echo "$(grep btime /proc/stat|cut -d " " -f 2)+\1" | bc)" +"%c");echo -n "]";echo -n "\2"#e''
 
@@ -59,3 +47,5 @@ alias end="less +G -N"
 #follow 
 alias follow="less +F -N"
 alias podman='podman-remote-static-linux_amd64'
+alias uppies="sudo apt update && sudo apt upgrade -y && sudo apt autoremove"
+alias ls='exa -al'

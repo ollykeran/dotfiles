@@ -1,4 +1,14 @@
 #make dir and cd into it
+auto_uppies() {
+    local flag_file
+    flag_file=.uppies_$(date +%Y%m%d)
+
+    if [ -f $flag_file ]; then
+        return 0
+    fi
+    touch $flag_file
+    uppies
+}
 mkcd ()
 {
     mkdir -pv -- "$1" && cd -P -- "$1"

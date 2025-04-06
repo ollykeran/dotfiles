@@ -23,7 +23,9 @@ if [ -d "$HOME/.local/share/luals/bin" ]; then
     PATH="$HOME/.local/share/luals/bin:$PATH"
 fi 
 
-PATH="$PATH:/usr/local/bin:/usr/local/go/bin"
+export EZA_CONFIG_DIR=~/.config/eza
+
+PATH="$PATH:/usr/local/bin:/usr/local/go/bin:$HOME/go/bin"
 export PATH
 
 export EDITOR=nvim
@@ -37,3 +39,4 @@ Blue='\e[0;34m'         # Blue
 Purple='\e[0;35m'       # Purple
 Cyan='\e[0;36m'         # Cyan
 White='\e[0;37m'        # White
+. "$HOME/.cargo/env"

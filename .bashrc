@@ -2,10 +2,12 @@
 
 [ -z "$PS1" ] && return
 
-. ~/.bash_alias
-
-#. "$dotdir"/.bash_profile
-. ~/.bash_functions
+if [ -f ~/.bash_alias ]; then
+    . $HOME/.bash_alias
+fi
+if [ -f ~/.bash_functions ]; then
+    . $HOME/.bash_functions
+fi
 
 if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
@@ -13,25 +15,14 @@ elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-# ## change prompt 
-# live="\[\e[0;35m\]\u\[\e[0m\]-\[\e[0;1;92m\]LIVE\[\e[0m\]:\[\e[0;96m\]\w\[\e[0;97m\]\$\[\e[0m\] "
-# standby="\[\e[0;35m\]\u\[\e[0m\]-\[\e[0;38;5;214m\]STANDBY\[\e[0m\]:\[\e[0;96m\]\w\[\e[0;97m\]\$\[\e[0m\] "
-
-# ##else load PS1
-# PS1="\[\e[0;35m\]\u\[\e[0m\]-\[\e[0;38;5;214m\]STANDBY\[\e[0m\]:\[\e[0;96m\]\w\[\e[0;97m\]\$\[\e[0m\]"
-PS1='\[\e[96m\]\u\[\e[37m\]@\[\e[95m\]\h\[\e[37m\]:\[\e[96m\]\w\\$\[\e[0m\] '
-
-gid=$(id -g)
-if [[ -f /tmp/primary_system_$gid ]]; then
-    PS1=$live
-fi
-if [[ -f /tmp/standby_system_$gid ]]; then
-    PS1=$standby
+if [ -S $SSH_AUTH_SOCK ]; then
+    eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l
 fi
 
-#export PATH=$PATH:/usr/bin/go
-eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l -E md5  
+. "$HOME/.cargo/env"
+
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
-alias ls='exa -al'
+
 neofetch
+auto_uppies
