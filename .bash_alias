@@ -1,6 +1,7 @@
 alias vi=nvim
 alias vim=nvim
 alias svi='sudo vi'
+alias ranger="yazi"
 
 # Stop after sending count ECHO_REQUEST packets #
 alias ping='ping -c 5'
@@ -8,16 +9,17 @@ alias ping='ping -c 5'
 alias fastping='ping -c 100 -s.2'
 
 #dirs
-alias ls='ls -al --color -h --group-directories-first'
+alias ls="eza -al --color -h --group-directories-first"
+## how can we set this only if eza is installed?
+#alias ls='ls -al --color -h --group-directories-first'
 alias ..="cd .."
 alias ...="cd .. && cd .."
+alias ....="cd .. && cd .. && cd .."
+alias .....="cd .. && cd .. && cd .. && cd .."
 
 #show deletes
 alias rmdir="rm -rfvI"
 alias rm="rm -vI"
-
-#alias top10="history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -10"
-#alias dmesgtime='dmesg | sed -r 's#^\[([0-9]+\.[0-9]+)\](.*)#echo -n "[";echo -n $(date --date="@$(echo "$(grep btime /proc/stat|cut -d " " -f 2)+\1" | bc)" +"%c");echo -n "]";echo -n "\2"#e''
 
 # disk
 alias du='du -h'
@@ -31,8 +33,10 @@ alias ports='netstat -natp'
 
 #count files
 alias countfiles='find . -type f | wc -l'
+alias updatedb="sudo updatedb --prunepaths=/mnt"
+alias updatewindb="sudo updatedb"
 
-alias locate="locate -i"
+alias locate="locate -ip"
 alias man="man -a"
 alias ps="ps -wef f"
 alias pgrep="pgrep -af"
@@ -45,7 +49,6 @@ alias duck="for i in G M K; do    du -ah | grep [0-9]$i | sort -nr -k 1; done | 
 #less end of file
 alias end="less +G -N"
 #follow 
-alias follow="less +F -N"
 alias podman='podman-remote-static-linux_amd64'
+alias follow="less +F -N"
 alias uppies="sudo apt update && sudo apt upgrade -y && sudo apt autoremove"
-alias ls='exa -al'

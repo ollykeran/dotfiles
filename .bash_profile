@@ -1,5 +1,19 @@
 # for some reason .bash_profile is the entry point on debian
-. ~/.bashrc
+#. ~/.bashrc
+. ~/git/dotfiles/.bash_functions
+. ~/git/dotfiles/.bash_alias
+
+. "$HOME/.cargo/env"
+
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+export PS1="\w\[\e[91m\]:󰣚\$\[\e[0m\] "
+
+fastfetch
+
 # append to the history file, don't overwrite it
 shopt -s histappend
 HISTSIZE=100000
@@ -11,32 +25,29 @@ shopt -s cdspell
 shopt -s dirspell
 shopt -s checkwinsize
 
-
-# set PATH so it includes user bin if it exists
-if [ -d "/opt/nvim-linux64/bin" ]; then 
-    PATH="/opt/nvim-linux64/bin:$PATH"
-fi 
-if [ -d "$HOME/.local/bin" ]; then 
-    PATH="$HOME/.local/bin:$PATH"
-fi 
-if [ -d "$HOME/.local/share/luals/bin" ]; then 
-    PATH="$HOME/.local/share/luals/bin:$PATH"
-fi 
-
+# Add a list of directories to PATH if they exist (idempotent)
 export EZA_CONFIG_DIR=~/.config/eza
-
-PATH="$PATH:/usr/local/bin:/usr/local/go/bin:$HOME/go/bin"
-export PATH
-
+export EGET_BIN=~/.local/bin/
 export EDITOR=nvim
 
-# Normal Colors
-Black='\e[0;30m'        # Black
-Red='\e[0;31m'          # Red
-Green='\e[0;32m'        # Green
-Yellow='\e[0;33m'       # Yellow
-Blue='\e[0;34m'         # Blue
-Purple='\e[0;35m'       # Purple
-Cyan='\e[0;36m'         # Cyan
-White='\e[0;37m'        # White
-. "$HOME/.cargo/env"
+# Append directories from an array to PATH if they exist (avoid duplicates)
+dirs=(
+    /opt/nvim-linux64/bin
+    "$HOME/.local/bin"
+    "$HOME/.local/share/luals/bin"
+    /usr/local/bin
+    /usr/local/go/bin
+    "$HOME/go/bin"
+    "$HOME/.cargo/bin"
+    "/opt/nvim-linux-x86_64/bin"
+)
+
+for d in "${dirs[@]}"; do
+    [ -d "$d" ] || continue
+    case ":$PATH:" in
+        *":$d:") ;; # already present
+        *) PATH="$PATH:$d";;
+    esac
+done
+
+export PATH
