@@ -1,0 +1,2 @@
+-- Custom init (optional)
+-- Add any custom require or setup that should run when NvChad loads

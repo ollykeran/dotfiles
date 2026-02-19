@@ -1,7 +1,11 @@
 # for some reason .bash_profile is the entry point on debian
-#. ~/.bashrc
-. ~/git/dotfiles/.bash_functions
-. ~/git/dotfiles/.bash_alias
+##how can we make this more robust?
+# put everything in profile and have bashrc just source it if we are using an interactive shell or another OS that calls rc first?
+#! /bin/bash
+
+. ~/.bashrc
+. ~/.bash_functions
+. ~/.bash_alias
 
 . "$HOME/.cargo/env"
 
@@ -28,7 +32,12 @@ shopt -s checkwinsize
 # Add a list of directories to PATH if they exist (idempotent)
 export EZA_CONFIG_DIR=~/.config/eza
 export EGET_BIN=~/.local/bin/
+export EGET_CONFIG=~/.config/eget/config.toml
 export EDITOR=nvim
+export PAGER=moar
+export REPO_ROOT=$HOME/git/dotfiles
+export BIN_DIR=$HOME/.local/bin
+export GITHUB_TOKEN=
 
 # Append directories from an array to PATH if they exist (avoid duplicates)
 dirs=(

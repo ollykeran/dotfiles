@@ -1,0 +1,8 @@
+# Config is written to ~/.config/chezmoi/chezmoi.toml by install-deps.sh with sourceDir set to this repo.
+# To use this repo as source without running install-deps.sh:
+#   chezmoi --config="$PWD/chezmoi.toml" -S "$PWD" apply
+# Or after install-deps.sh: chezmoi apply (uses ~/.config/chezmoi/chezmoi.toml).
+
+[git]
+autoCommit = false
+autoPush = false

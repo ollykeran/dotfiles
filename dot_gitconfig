@@ -1,0 +1,38 @@
+[user]
+	name = OllyKeran
+	email = ollykeran@gmail.com
+[color]
+  ui = auto
+
+[color "branch"]
+
+
+  upstream = cyan
+
+[status]
+  submoduleSummary = true
+  showUntrackedFiles = all
+
+[push]
+  default = upstream
+  followTags = true
+
+[log]
+  abbrevCommit = true
+  follow = true
+  decorate = false
+
+[core]
+  pager = cat
+  excludesfile = ~/.gitignore_global
+  editor = cursor --wait
+  whitespace = -trailing-space
+
+[diff]
+  mnemonicPrefix = true
+  renames = true
+  wordRegex = .
+  submodule = log
+  tool = cursor
+[difftool "cursor"]
+  cmd = cursor --wait --diff $LOCAL $REMOTE

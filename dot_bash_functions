@@ -1,0 +1,281 @@
+#make dir and cd into it
+
+mkcd ()
+{
+    mkdir -pv -- "$1" && cd -P -- "$1"
+}
+
+cl() {
+    DIR="$*";
+        # if no DIR given, go home
+        if [ $# -lt 1 ]; then
+                DIR=$HOME;
+    fi;
+    builtin cd "${DIR}" && \
+    # use your preferred ls command
+        ls -al --color=always --group-directories-first
+}
+
+
+hg() {
+    history | grep "$1";
+}
+
+header() {
+    file_extract -f $1
+    head -n1 $1.* | tr '~' \\n | sed s/^\"//g | sed s/\"$//g | nl
+}
+
+journal() {
+    time=$(date -u +"%Y%m%d%H")
+    db_jrn_track ~/journal/"$time".db_jrn "$1"
+}
+
+findprocs() {
+    ## just use pgrep? 
+    ps -wef f | grep "$1" 
+    ## TODO 
+    #add fn to pass to netstat / give name of proc and show netstat and pgrep
+}
+
+topswap() {
+    for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | sort -k 2 -n -r | head -n 10
+}
+
+info() {
+    df -P -h -t 9p -t ext4 |  grep -v none
+    hostname -I | grep -vE '^192\.|^172\.'
+}
+
+# Run eget --upgrade-only for eget_pkgs.txt, go-global-update, then topgrade.
+uppies() {
+    local list bin_dir
+    list="${REPO_ROOT:-$HOME/git/dotfiles}/eget_pkgs.txt"
+    bin_dir="${BIN_DIR:-$HOME/.local/bin}"
+    if command -v eget &>/dev/null && [[ -f "$list" ]]; then
+        printf '\n[uppies] Eget binaries (--upgrade-only)\n'
+        export PATH="$bin_dir:$PATH"
+        set_eget_arch
+        # eget has no --non-interactive; when multiple assets match it prompts. Piping 1 picks first.
+        while IFS= read -r spec || [[ -n "$spec" ]]; do
+            [[ -z "${spec// }" ]] && continue
+            (cd "$(mktemp -d)" && printf '1\n' | eget --upgrade-only --system "$EGET_SYSTEM" --to "$bin_dir" $EGET_EXTRA "$spec") || true
+        done < <(read_pkgs "$list")
+    fi
+    if command -v go-global-update &>/dev/null; then
+        printf '\n[uppies] Go global binaries\n'
+        go-global-update
+    fi
+    if command -v topgrade &>/dev/null; then
+        printf '\n[uppies] Topgrade\n'
+        topgrade
+    else
+        echo "[uppies] topgrade not found; install via cargo or eget"
+    fi
+}
+
+# --- install-deps helpers and install functions ---
+# Set EGET_SYSTEM from current arch so eget picks the right binary (one candidate, no prompt). Override with EGET_EXTRA if needed.
+set_eget_arch() {
+	local m
+	m="$(uname -m)"
+	case "$m" in
+		x86_64)   EGET_SYSTEM=linux/amd64 ;;
+		aarch64|arm64) EGET_SYSTEM=linux/arm64 ;;
+		armv7l)   EGET_SYSTEM=linux/arm ;;
+		i686)     EGET_SYSTEM=linux/386 ;;
+		*)        EGET_SYSTEM=linux/amd64 ;;
+	esac
+}
+# Expect REPO_ROOT, BIN_DIR, FONT_DIR, NERD_FONTS_VERSION, NVIM_CONFIG, EGET_SHA256 set by caller (e.g. install-deps.sh).
+read_pkgs() {
+	local f="$1"
+	[[ -f "$f" ]] && grep -v '^[# ]*$' "$f" | sed 's/#.*//' | tr -d '\r' || true
+}
+
+install_log() { printf '\n[install-deps] %s\n' "$*"; }
+
+install_chezmoi() {
+	if command -v chezmoi &>/dev/null; then
+		install_log "chezmoi already on PATH, skipping"
+	else
+		mkdir -p "$BIN_DIR"
+		install_log "Installing chezmoi to $BIN_DIR"
+		sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$BIN_DIR"
+		export PATH="$BIN_DIR:$PATH"
+		install_log "chezmoi installed; add $BIN_DIR to PATH if needed"
+	fi
+	mkdir -p "${HOME}/.config/chezmoi"
+	local config="${HOME}/.config/chezmoi/chezmoi.toml"
+	if [[ ! -f "$config" ]] || ! grep -qF "sourceDir = \"${REPO_ROOT}\"" "$config" 2>/dev/null; then
+		printf '%s\n' "sourceDir = \"${REPO_ROOT}\"" "[git]" "autoCommit = false" "autoPush = false" > "$config"
+		install_log "Wrote $config with sourceDir = $REPO_ROOT"
+	fi
+}
+
+install_eget() {
+	if command -v eget &>/dev/null; then
+		install_log "eget already on PATH, skipping bootstrap"
+		return 0
+	fi
+	local tmpdir
+	tmpdir="$(mktemp -d)"
+	trap "rm -rf '$tmpdir'" RETURN
+	curl -sSL -o "$tmpdir/eget.sh" https://zyedidia.github.io/eget.sh
+	local sum
+	sum="$(sha256sum -b "$tmpdir/eget.sh" | awk '{print $1}')"
+	if [[ "$sum" != "$EGET_SHA256" ]]; then
+		install_log "eget.sh checksum mismatch (got $sum)"
+		return 1
+	fi
+	(cd "$tmpdir" && bash eget.sh)
+	mkdir -p "$BIN_DIR"
+	if [[ -f "$tmpdir/eget" ]]; then
+		mv -f "$tmpdir/eget" "$BIN_DIR/eget"
+	fi
+	export PATH="$BIN_DIR:$PATH"
+	install_log "eget installed to $BIN_DIR (add to PATH if needed)"
+}
+
+install_system_packages() {
+	if command -v apt-get &>/dev/null; then
+		local list="${REPO_ROOT}/deb_pkgs.txt"
+		[[ ! -f "$list" ]] && return 0
+		install_log "Installing system packages (apt) from deb_pkgs.txt"
+		sudo apt-get update
+		while IFS= read -r pkg || [[ -n "$pkg" ]]; do
+			[[ -z "${pkg// }" ]] && continue
+			dpkg -l "$pkg" &>/dev/null || sudo apt-get install -y "$pkg"
+		done < <(read_pkgs "$list")
+	elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
+		local list="${REPO_ROOT}/dnf_pkgs.txt"
+		[[ ! -f "$list" ]] && return 0
+		install_log "Installing system packages (dnf/yum) from dnf_pkgs.txt"
+		while IFS= read -r pkg || [[ -n "$pkg" ]]; do
+			[[ -z "${pkg// }" ]] && continue
+			sudo dnf install -y "$pkg" 2>/dev/null || sudo yum install -y "$pkg" 2>/dev/null || true
+		done < <(read_pkgs "$list")
+	else
+		install_log "Unknown package manager; skip system packages or add support"
+	fi
+}
+
+install_font() {
+	if fc-list 2>/dev/null | grep -qi "Martian.*Mono"; then
+		install_log "Martian Mono (Nerd) font already present, skipping"
+		return 0
+	fi
+	if command -v pacman &>/dev/null; then
+		install_log "Installing ttf-martian-mono-nerd (pacman)"
+		sudo pacman -S --noconfirm ttf-martian-mono-nerd 2>/dev/null || true
+		return 0
+	fi
+	install_log "Installing Martian Mono Nerd from nerd-fonts release"
+	mkdir -p "$FONT_DIR"
+	local tmpdir
+	tmpdir="$(mktemp -d)"
+	trap "rm -rf '$tmpdir'" RETURN
+	curl -sSL -o "$tmpdir/MartianMono.tar.xz" \
+		"https://github.com/ryanoasis/nerd-fonts/releases/download/${NERD_FONTS_VERSION}/MartianMono.tar.xz"
+	tar -xJf "$tmpdir/MartianMono.tar.xz" -C "$tmpdir"
+	cp -n "$tmpdir"/*.ttf "$FONT_DIR/" 2>/dev/null || true
+	fc-cache -fv
+	install_log "Fonts installed to $FONT_DIR"
+}
+
+install_eget_binaries() {
+	export PATH="$BIN_DIR:$PATH"
+	if ! command -v eget &>/dev/null; then
+		install_log "eget not found; run install_eget first or add $BIN_DIR to PATH"
+		return 1
+	fi
+	local list="${REPO_ROOT}/eget_pkgs.txt"
+	[[ ! -f "$list" ]] && return 0
+	mkdir -p "$BIN_DIR"
+	set_eget_arch
+	# eget has no --non-interactive; when multiple assets match it prompts. Piping 1 picks first.
+	while IFS= read -r spec || [[ -n "$spec" ]]; do
+		[[ -z "${spec// }" ]] && continue
+		local name="${spec##*/}"
+		if [[ -x "$BIN_DIR/$name" ]] || [[ -x "$BIN_DIR/nvim" && "$name" == "neovim" ]]; then
+			install_log "Binary for $spec already present, skipping"
+			continue
+		fi
+		install_log "eget $spec -> $BIN_DIR"
+		(cd "$(mktemp -d)" && printf '1\n' | eget --system "$EGET_SYSTEM" --to "$BIN_DIR" $EGET_EXTRA "$spec") || true
+	done < <(read_pkgs "$list")
+	if [[ -x /opt/nvim-linux64/bin/nvim ]]; then
+		install_log "Neovim already at /opt/nvim-linux64"
+	elif [[ -d "$BIN_DIR/nvim-linux64" ]]; then
+		sudo mv -f "$BIN_DIR/nvim-linux64" /opt/ 2>/dev/null || true
+	fi
+}
+
+install_starship() {
+	if command -v starship &>/dev/null; then
+		install_log "starship already installed"
+		return 0
+	fi
+	curl -sS https://starship.rs/install.sh | sh -s -- -y
+	install_log "starship installed"
+}
+
+install_go_tools() {
+	if ! command -v go &>/dev/null; then
+		install_log "Go not found; install golang from system packages or eget and re-run"
+		return 0
+	fi
+	local list="${REPO_ROOT}/go_pkgs.txt"
+	[[ ! -f "$list" ]] && return 0
+	export PATH="$BIN_DIR:${HOME}/go/bin:$PATH"
+	while IFS= read -r pkg || [[ -n "$pkg" ]]; do
+		[[ -z "${pkg// }" ]] && continue
+		install_log "go install $pkg"
+		go install "$pkg" 2>/dev/null || true
+	done < <(read_pkgs "$list")
+}
+
+install_rust_tools() {
+	if ! command -v cargo &>/dev/null; then
+		if command -v rustup &>/dev/null; then
+			rustup default stable
+			. "${HOME}/.cargo/env" 2>/dev/null || true
+		else
+			install_log "Rust/cargo not found; install rustup from system packages or rustup-init and re-run"
+			return 0
+		fi
+	fi
+	local list="${REPO_ROOT}/cargo_pkgs.txt"
+	[[ ! -f "$list" ]] && return 0
+	while IFS= read -r crate || [[ -n "$crate" ]]; do
+		[[ -z "${crate// }" ]] && continue
+		local bin_name="$crate"
+		[[ "$crate" == "fd-find" ]] && bin_name="fd"
+		if command -v "$bin_name" &>/dev/null; then
+			install_log "$bin_name already on PATH, skipping cargo install $crate"
+			continue
+		fi
+		install_log "cargo install $crate"
+		cargo install "$crate" 2>/dev/null || true
+	done < <(read_pkgs "$list")
+}
+
+install_nvchad() {
+	if [[ -d "$NVIM_CONFIG" ]] && [[ -f "$NVIM_CONFIG/lua/nvchad" ]] || grep -q "nvchad" "$NVIM_CONFIG/init.lua" 2>/dev/null; then
+		install_log "NvChad already present at $NVIM_CONFIG"
+		return 0
+	fi
+	if [[ -d "$NVIM_CONFIG" ]]; then
+		install_log "Backing up existing $NVIM_CONFIG to ${NVIM_CONFIG}.bak"
+		mv -f "$NVIM_CONFIG" "${NVIM_CONFIG}.bak"
+	fi
+	git clone --depth 1 https://github.com/NvChad/starter "$NVIM_CONFIG"
+	install_log "NvChad starter cloned to $NVIM_CONFIG; run 'nvim' and optionally :MasonInstallAll :TSInstallAll"
+}
+
+install_bash_ls() {
+	if command -v snap &>/dev/null && ! command -v bash-language-server &>/dev/null; then
+		install_log "Installing bash-language-server (snap)"
+		sudo snap install bash-language-server --classic 2>/dev/null || true
+	fi
+}

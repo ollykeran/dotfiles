@@ -1,0 +1,283 @@
+[include]
+# Files in $CONFIG_DIR/topgrade.d/ are automatically included before this file
+# paths = ["/etc/topgrade.toml"]
+
+[misc]
+allow_root = false
+pre_sudo = true
+sudo_command = "sudo"
+
+### This could be veryyy interesting - replace proxmox updater?
+# List of remote machines with Topgrade installed on them
+# remote_topgrades = ["toothless", "pi", "parnas"]
+# remote_topgrade_path = ".cargo/bin/topgrade"
+# ssh_arguments = "-o ConnectTimeout=2"
+
+# Arguments to pass tmux when pulling Repositories
+# tmux_arguments = "-S /var/tmux.sock"
+
+# Do not set the terminal title (default: true)
+set_title = true
+
+# Display the time in step titles (default: true)
+display_time = true
+
+# Don't ask for confirmations (no default value)
+assume_yes = true
+
+# Do not ask to retry failed steps (default: false)
+no_retry = true
+show_skipped = true
+
+run_in_tmux = false
+
+# (default: "attach_if_not_in_session", allowed values: "attach_if_not_in_session", "attach_always")
+tmux_session_mode = "attach_always"
+
+# Cleanup temporary or old files (default: false)
+cleanup = true
+
+# Send a notification for every step (default: false)
+# notify_each_step = false
+# Skip sending a notification at the end of a run (default: false)
+# skip_notify = true
+
+# The Bash-it branch to update (default: "stable")
+# bashit_branch = "stable"
+
+# Whether to self update
+# available also via setting the environment variable TOPGRADE_NO_SELF_UPGRADE)
+no_self_update = false
+
+# These are prepended to the `--log-filter` argument
+# See: https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.EnvFilter.html#directives
+# log_filters = ["topgrade::command=debug", "warn"]
+
+# Whether to show a distribution-specific summary if applicable, e.g. listing
+# Pacman backup configuration files (*.pacsave and *.pacnew)
+show_distribution_summary = true
+
+# Commands to run before anything
+[pre_commands]
+
+# Commands to run after anything
+[post_commands]
+
+# Custom commands
+[commands]
+"go bin update" = "go-global-update"
+
+[python]
+# enable_pip_review = true                         ###disabled by default
+# enable_pip_review_local = true                   ###disabled by default
+enable_pipupgrade = true                         ###disabled by default
+# pipupgrade_arguments = "-y -u --pip-path pip"    ###disabled by default
+
+# For the poetry step, by default, Topgrade skips its update if poetry is not
+# installed with the official script. This configuration entry forces Topgrade
+# to run the update in this case.
+#
+# (default: false)
+# poetry_force_self_update = true
+
+
+[conda]
+# Additional named conda environments to update (`conda env update -n env_name`)
+# env_names = [
+#     "Toolbox",
+#     "PyTorch"
+# ]
+# Additional conda environment paths to update (`conda env update -p env_path`)
+# env_paths = [
+#     "~/webserver/.conda/",
+#     "~/experiments/.conda/"
+# ]
+
+
+[composer]
+self_update = true
+
+
+[linux]
+# Arch Package Manager to use.
+# Allowed values:
+#   autodetect, aura, garuda_update, pacman, pamac, paru, pikaur, trizen, yay
+arch_package_manager = "paru"
+
+# Arguments to pass yay (or paru) when updating packages
+# yay_arguments = "--nodevel"
+
+# Arguments to pass dnf when updating packages
+dnf_arguments = "--refresh"
+
+# aura_aur_arguments = "-kx"
+
+# aura_pacman_arguments = ""
+# garuda_update_arguments = ""
+
+# show_arch_news = true
+
+# trizen_arguments = "--devel"
+
+# pikaur_arguments = ""
+
+# pamac_arguments = "--no-devel"
+
+# enable_tlmgr = true
+
+# emerge_sync_flags = "-q"
+
+# emerge_update_flags = "-uDNa --with-bdeps=y world"
+
+# redhat_distro_sync = false
+
+# suse_dup = false
+
+# rpm_ostree = false
+
+# For Fedora/CentOS/RHEL Atomic variants, if `bootc` is available and this configuration entry is set to true, use
+# it to do the update - Will also supersede rpm-ostree if enabled
+# (default: false)
+# bootc = false
+
+# nix_arguments = "--flake"
+
+# nix_env_arguments = "--prebuilt-only"
+
+# Extra Home Manager arguments
+# home_manager_arguments = ["--flake", "file"]
+
+
+[mandb]
+# Enable the mandb step (to update manual entries).
+# Mandb is updated in the background by a service on most systems by default.
+# (default: false)
+enable = true
+
+
+[pkgfile]
+# Enable the pkgfile step (to update the pkgfile database).
+# Pkgfile is sometimes installed by default, but often not used and heavy to update.
+# (default: false)
+# enable = true
+
+
+[git]
+# How many repos to pull or fetch at max in parallel
+# max_concurrency = 5
+
+# Additional git repositories to pull or fetch
+# repos = [
+#     "~/src/*/",
+#     "~/.config/something"
+# ]
+
+# Set to `false` to skip pulling/fetching the predefined git repos
+# pull_predefined = false
+
+# Arguments to pass Git when pulling/fetching Repositories
+# arguments = "--rebase --autostash"
+
+# Whether to perform a `git fetch` instead of `git pull`
+# fetch_only = false
+
+[windows]
+# Manually select Windows updates
+# accept_all_updates = false
+
+# Controls whether to automatically reboot the computer when updates are
+# installed that request it. (default: "no", allowed values: "yes", "no", "ask")
+# updates_auto_reboot = "yes"
+
+# open_remotes_in_new_terminal = true
+
+# wsl_update_pre_release = true
+
+# wsl_update_use_web_download = true
+
+# The default for winget_install_silently is true,
+# this example turns off silent install.
+# winget_install_silently = false
+
+# Causes Topgrade to rename itself during the run to allow package managers
+# to upgrade it. Use this only if you installed Topgrade by using a package
+# manager such as Scoop or Cargo
+# self_rename = true
+
+# Use sudo to elevate privileges for the Windows Package Manager (winget)
+# Only use this option if you want to run the Winget step in sudo-mode.
+# Running winget in sudo-mode is generally not recommended, as not every
+# package supports installing / upgrading in sudo-mode and it may cause issues
+# with some packages or may even cause the Winget-step to fail.
+# If any problems occur, please try running Topgrade without this option first
+# before reporting an issue.
+# (default: false)
+# winget_use_sudo = true
+
+
+[chezmoi]
+# Exclude encrypted files from update
+# (default: false)
+# exclude_encrypted = false
+
+[mise]
+# Upgrades to the latest version available, bumping the version in mise.toml
+# (default: false)
+# bump = false
+
+# Number of jobs to run in parallel
+# (default: 4)
+# jobs = 4
+
+# Run interactively
+# (default: false)
+# interactive = false
+
+
+[npm]
+# Use sudo if the NPM directory isn't owned by the current user
+# use_sudo = true
+
+[vim]
+# For `vim-plug`, execute `PlugUpdate!` instead of `PlugUpdate`
+# force_plug_update = true
+
+[firmware]
+# Offer to update firmware; if false just check for and display available updates
+upgrade = true
+
+[flatpak]
+# Use sudo for updating the system-wide installation
+# use_sudo = true
+
+[containers]
+# Specify the containers to ignore while updating (Wildcard supported)
+# ignored_containers = ["ghcr.io/rancher-sandbox/rancher-desktop/rdx-proxy:latest", "docker.io*"]
+# Specify the runtime to use for containers (default: "docker", allowed values: "docker", "podman")
+runtime = "docker"
+
+# Run 'docker system prune' to clean up unused containers, networks, and build cache
+# (default: false)
+# system_prune = false
+
+# Use sudo for updating containers. Necessary for non-rootless installs.
+# (default: false)
+# use_sudo = false
+
+[vscode]
+# If this is set and is a non-empty string, it specifies the profile the
+# extensions should be updated for.
+# (default: this won't be set by default)
+# profile = ""
+
+[cargo]
+git = true
+quiet = true
+
+# Other options like `--locked` or `--jobs` can be passed to `cargo install`
+# using the `CARGO_INSTALL_OPTS` environment variable.
+
+[rustup]
+# If set, updates only these channels.
+# (default: [] (all channels))
+channels = ["stable"]

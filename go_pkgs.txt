@@ -1,0 +1,2 @@
+github.com/zyedidia/eget@latest
+github.com/Gelio/go-global-update@latest
