@@ -1,13 +1,18 @@
-# for some reason .bash_profile is the entry point on debian
-##how can we make this more robust?
-# put everything in profile and have bashrc just source it if we are using an interactive shell or another OS that calls rc first?
 #! /bin/bash
 
-. ~/.bashrc
-. ~/.bash_functions
-. ~/.bash_alias
+sources=(
+    ~/.bash_functions
+    ~/.bash_alias
+    ~/.cargo/env
+    /usr/share/bash-completion/bash_completion
+    /etc/bash_completion
+)
 
-. "$HOME/.cargo/env"
+for source in "${sources[@]}"; do
+    [ -f "$source" ] || continue
+    . "$source"
+done
+
 
 case $- in
     *i*) ;;
@@ -23,6 +28,8 @@ shopt -s histappend
 HISTSIZE=100000
 HISTFILESIZE=200000
 HISTTIMEFORMAT="%d/%m/%y %T "
+# don't put duplicate lines or lines starting with space in the history
+HISTCONTROL=ignoreboth
 
 shopt -s autocd
 shopt -s cdspell
@@ -35,20 +42,20 @@ export EGET_BIN=~/.local/bin/
 export EGET_CONFIG=~/.config/eget/config.toml
 export EDITOR=nvim
 export PAGER=moar
-export REPO_ROOT=$HOME/git/dotfiles
-export BIN_DIR=$HOME/.local/bin
+export REPO_ROOT=~/git/dotfiles
+export BIN_DIR=~/.local/bin
 export GITHUB_TOKEN=
 
 # Append directories from an array to PATH if they exist (avoid duplicates)
 dirs=(
     /opt/nvim-linux64/bin
-    "$HOME/.local/bin"
-    "$HOME/.local/share/luals/bin"
+    ~/.local/bin
+    ~/.local/share/luals/bin
     /usr/local/bin
     /usr/local/go/bin
-    "$HOME/go/bin"
-    "$HOME/.cargo/bin"
-    "/opt/nvim-linux-x86_64/bin"
+    ~/go/bin
+    ~/.cargo/bin
+    /opt/nvim-linux-x86_64/bin
 )
 
 for d in "${dirs[@]}"; do
@@ -60,3 +67,7 @@ for d in "${dirs[@]}"; do
 done
 
 export PATH
+
+if [ -S $SSH_AUTH_SOCK ]; then
+    eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l
+fi

@@ -52,7 +52,4 @@ alias end="less +G -N"
 #follow 
 alias podman='podman-remote-static-linux_amd64'
 alias follow="less +F -N"
-<<<<<<< HEAD:.bash_alias
 alias uppies="sudo apt update && sudo apt upgrade -y && sudo apt autoremove"
-=======
->>>>>>> ac3505e (post chezmoi conversion):dot_bash_alias
