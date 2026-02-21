@@ -13,30 +13,23 @@ for source in "${sources[@]}"; do
     . "$source"
 done
 
-
 case $- in
     *i*) ;;
       *) return;;
 esac
 
-export PS1="\w\[\e[91m\]:󰣚\$\[\e[0m\] "
-
-fastfetch
-
-# append to the history file, don't overwrite it
-shopt -s histappend
 HISTSIZE=100000
 HISTFILESIZE=200000
 HISTTIMEFORMAT="%d/%m/%y %T "
-# don't put duplicate lines or lines starting with space in the history
 HISTCONTROL=ignoreboth
 
+shopt -s histappend
 shopt -s autocd
 shopt -s cdspell
 shopt -s dirspell
 shopt -s checkwinsize
 
-# Add a list of directories to PATH if they exist (idempotent)
+export PS1="\w\[\e[91m\]:󰣚\$\[\e[0m\] "
 export EZA_CONFIG_DIR=~/.config/eza
 export EGET_BIN=~/.local/bin/
 export EGET_CONFIG=~/.config/eget/config.toml
@@ -44,9 +37,9 @@ export EDITOR=nvim
 export PAGER=moar
 export REPO_ROOT=~/git/dotfiles
 export BIN_DIR=~/.local/bin
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/openssh_agent"
 export GITHUB_TOKEN=
 
-# Append directories from an array to PATH if they exist (avoid duplicates)
 dirs=(
     /opt/nvim-linux64/bin
     ~/.local/bin
@@ -68,6 +61,5 @@ done
 
 export PATH
 
-if [ -S $SSH_AUTH_SOCK ]; then
-    eval $(ssh-agent) &> /dev/null && ssh-add ~/.ssh/*.priv &> /dev/null && ssh-add -l
-fi
+fastfetch
+ssh-add -l
