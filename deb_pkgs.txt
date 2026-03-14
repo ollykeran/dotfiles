@@ -18,3 +18,4 @@ gping
 eza
 fd-find
 zoxide
+entr

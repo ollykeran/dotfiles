@@ -1,0 +1,33 @@
+profiles:
+    haive:
+        addr: https://bee.emu-chinstrap.ts.net
+        user: root
+        password: 
+        token_id: ""
+        token_secret: ""
+        realm: pam
+        api_path: /api2/json
+        insecure: true
+        ssh_user: root
+        vm_ssh_user: root
+default_profile: haive
+key_bindings:
+    switch_view: ']'
+    switch_view_reverse: '['
+    nodes_page: Alt+1
+    guests_page: Alt+2
+    tasks_page: Alt+3
+    menu: m
+    global_menu: g
+    shell: s
+    vnc: v
+    refresh: Ctrl+r
+    auto_refresh: a
+    search: /
+    help: '?'
+    quit: q
+theme:
+    name: default
+    colors: {}
+plugins:
+    enabled: []

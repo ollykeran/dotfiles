@@ -41,6 +41,7 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/openssh_agent"
 export GITHUB_TOKEN=
 
 dirs=(
+    ~/.opencode/bin
     /opt/nvim-linux64/bin
     ~/.local/bin
     ~/.local/share/luals/bin
@@ -60,6 +61,8 @@ for d in "${dirs[@]}"; do
 done
 
 export PATH
+
+# eval "$(command wt config shell init bash)"
 
 fastfetch
 ssh-add -l

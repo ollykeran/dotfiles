@@ -1,0 +1,22 @@
+[misc]
+
+show_skipped = false
+
+
+[linux]
+
+[git]
+
+max_concurrency = 5
+
+repos = [
+    "~/git/hosts/",
+]
+
+fetch_only = false
+
+[mandb]
+enable = true
+
+[vim]
+force_plug_update = true
