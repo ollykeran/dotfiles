@@ -24,6 +24,7 @@ abbr -a code "bash -lc 'code \"$PWD\"'"
 abbr -a cursor "bash -lc 'cursor \"$PWD\"'"
 abbr -a explorer "bash -lc 'explorer \"$PWD\"'"
 
+abbr -a cz 'chezmoi'
 
 function ... --description 'bash alias: ...'
     cd .. && cd .. $argv
