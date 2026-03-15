@@ -20,10 +20,6 @@ abbr -a df 'df -h'
 abbr -a less 'less -r -N'
 abbr -a ports 'netstat -natp'
 
-abbr -a code "bash -lc 'code \"$PWD\"'"
-abbr -a cursor "bash -lc 'cursor \"$PWD\"'"
-abbr -a explorer "bash -lc 'explorer \"$PWD\"'"
-
 abbr -a cz 'chezmoi'
 
 function ... --description 'bash alias: ...'
