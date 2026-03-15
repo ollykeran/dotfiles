@@ -13,6 +13,18 @@ abbr -a ping 'ping -c 5'
 abbr -a fastping 'ping -c 100 -s.2'
 abbr -a ls 'eza -al --color -h --group-directories-first'
 abbr -a .. 'cd ..'
+abbr -a rmdir 'rm -rfvI'
+abbr -a rm 'rm -vI'
+abbr -a du 'du -h'
+abbr -a df 'df -h'
+abbr -a less 'less -r -N'
+abbr -a ports 'netstat -natp'
+
+abbr -a code "bash -lc 'code \"$PWD\"'"
+abbr -a cursor "bash -lc 'cursor \"$PWD\"'"
+abbr -a explorer "bash -lc 'explorer \"$PWD\"'"
+
+
 function ... --description 'bash alias: ...'
     cd .. && cd .. $argv
 end
@@ -25,12 +37,7 @@ function ..... --description 'bash alias: .....'
     cd .. && cd .. && cd .. && cd .. $argv
 end
 
-abbr -a rmdir 'rm -rfvI'
-abbr -a rm 'rm -vI'
-abbr -a du 'du -h'
-abbr -a df 'df -h'
-abbr -a less 'less -r -N'
-abbr -a ports 'netstat -natp'
+
 function countfiles --description 'bash alias: countfiles'
     find . -type f | wc -l $argv
 end
