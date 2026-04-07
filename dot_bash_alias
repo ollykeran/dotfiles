@@ -1,4 +1,6 @@
-alias reset='cd ~ && chezmoi apply && . ~/.bash_profile && clear '
+alias reset='cd ~ && clear'
+alias lg='lazygit'
+alias cz='chezmoi'
 alias vi=nvim
 alias vim=nvim
 alias svi='sudo vi'
@@ -39,8 +41,9 @@ alias updatewindb="sudo updatedb"
 
 alias locate="locate -ip"
 alias man="man -a"
-alias ps="ps -wef f"
-alias pgrep="pgrep -af"
+# Portable: GNU ps -wef is invalid on BSD/macOS; auxww works on Linux (procps) and Darwin.
+alias ps="ps auxww"
+alias pgrep="pgrep -lf"
 
 alias sl="ls -al --color -h --group-directories-first"
 #gets largest files
@@ -52,4 +55,3 @@ alias end="less +G -N"
 #follow 
 alias podman='podman-remote-static-linux_amd64'
 alias follow="less +F -N"
-alias uppies="sudo apt update && sudo apt upgrade -y && sudo apt autoremove"

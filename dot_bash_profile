@@ -13,6 +13,14 @@ for source in "${sources[@]}"; do
     . "$source"
 done
 
+case "$(uname -s)" in
+  Darwin)
+    alias ports='lsof -nP -iTCP -sTCP:LISTEN'
+    unalias podman 2>/dev/null || true
+    unalias updatedb updatewindb locate 2>/dev/null || true
+    ;;
+esac
+
 case $- in
     *i*) ;;
       *) return;;
@@ -35,20 +43,26 @@ export EGET_BIN=~/.local/bin/
 export EGET_CONFIG=~/.config/eget/config.toml
 export EDITOR=nvim
 export PAGER=moar
-export REPO_ROOT=~/git/dotfiles
+export REPO_ROOT="$HOME/.local/share/chezmoi"
 export BIN_DIR=~/.local/bin
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/openssh_agent"
 export GITHUB_TOKEN=
+
+if [[ "$(uname -s)" == Linux ]] && [[ -n "${XDG_RUNTIME_DIR:-}" ]] && [[ -S "${XDG_RUNTIME_DIR}/openssh_agent" ]]; then
+    export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/openssh_agent"
+fi
 
 dirs=(
     ~/.opencode/bin
-    /opt/nvim-linux64/bin
-    ~/.local/bin
     ~/.local/share/luals/bin
+    ~/.local/bin
+    /usr/local/sbin
     /usr/local/bin
+    /opt/homebrew/sbin
+    /opt/homebrew/bin
     /usr/local/go/bin
     ~/go/bin
     ~/.cargo/bin
+    /opt/nvim-linux64/bin
     /opt/nvim-linux-x86_64/bin
 )
 

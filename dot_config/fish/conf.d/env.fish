@@ -5,17 +5,19 @@ set -gx EGET_BIN $HOME/.local/bin/
 set -gx EGET_CONFIG $HOME/.config/eget/config.toml
 set -gx EDITOR nvim
 set -gx PAGER moar
-set -gx REPO_ROOT $HOME/git/dotfiles
+set -gx REPO_ROOT $HOME/.local/share/chezmoi
 set -gx BIN_DIR $HOME/.local/bin
-set -gx SSH_AUTH_SOCK $XDG_RUNTIME_DIR/openssh_agent
 set -gx GITHUB_TOKEN ""
 
-fish_add_path /opt/nvim-linux-x86_64/bin
-fish_add_path $HOME/.cargo/bin
-fish_add_path $HOME/go/bin
-fish_add_path /usr/local/go/bin
-fish_add_path /usr/local/bin
-fish_add_path $HOME/.local/share/luals/bin
-fish_add_path $HOME/.local/bin
-fish_add_path /opt/nvim-linux64/bin
-fish_add_path $HOME/.opencode/bin
+test -d /opt/nvim-linux-x86_64/bin; and fish_add_path /opt/nvim-linux-x86_64/bin
+test -d /opt/nvim-linux64/bin; and fish_add_path /opt/nvim-linux64/bin
+test -d $HOME/.cargo/bin; and fish_add_path $HOME/.cargo/bin
+test -d $HOME/go/bin; and fish_add_path $HOME/go/bin
+test -d /usr/local/go/bin; and fish_add_path /usr/local/go/bin
+test -d /opt/homebrew/bin; and fish_add_path /opt/homebrew/bin
+test -d /opt/homebrew/sbin; and fish_add_path /opt/homebrew/sbin
+test -d /usr/local/bin; and fish_add_path /usr/local/bin
+test -d /usr/local/sbin; and fish_add_path /usr/local/sbin
+test -d $HOME/.local/bin; and fish_add_path $HOME/.local/bin
+test -d $HOME/.local/share/luals/bin; and fish_add_path $HOME/.local/share/luals/bin
+test -d $HOME/.opencode/bin; and fish_add_path $HOME/.opencode/bin

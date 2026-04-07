@@ -7,11 +7,17 @@ TODO.md
 .gitignore
 README.md
 .cursor
+scripts
 *.plan.md
 install-deps.sh
 deb_pkgs.txt
 dnf_pkgs.txt
+brew_pkgs.txt
+Brewfile
 eget_pkgs.txt
 go_pkgs.txt
 cargo_pkgs.txt
 chezmoi.toml
+{{- if ne .chezmoi.os "linux" }}
+.config/systemd
+{{- end }}

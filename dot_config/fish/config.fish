@@ -6,7 +6,7 @@ if status is-interactive
   eval (sshush start)
 end
 
-# Paths from dot_bash_profile are in conf.d/dotfiles.env.fish (fish_add_path)
+# Paths from dot_bash_profile are in conf.d/env.fish (fish_add_path)
 # Keep one explicit so opencode is on PATH if env not loaded
 
 fish_config theme choose catppuccin-mocha

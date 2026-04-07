@@ -97,6 +97,9 @@ enable_pipupgrade = true                         ###disabled by default
 [composer]
 self_update = true
 
+[brew]
+greedy_latest = true
+autoremove = true
 
 [linux]
 # Arch Package Manager to use.

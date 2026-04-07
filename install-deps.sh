@@ -2,9 +2,13 @@
 # Idempotent dependency installer for dotfiles.
 # Order: chezmoi (+ config) -> eget -> system packages -> font -> eget binaries -> Go -> go install -> Rust -> cargo install -> NvChad.
 #
+# macOS Homebrew: matches Brewfile and runs `brew bundle cleanup --force` (removes formulae/casks not listed).
+#   Skip removal: BREW_BUNDLE_SKIP_CLEANUP=1 ./install-deps.sh
+#   Brew only:    ./install-deps.sh sync-brew   (or scripts/sync-homebrew.sh)
+#
 # Run from repo root: ./install-deps.sh then: chezmoi apply
-# Package lists: deb_pkgs.txt, dnf_pkgs.txt, eget_pkgs.txt, go_pkgs.txt, cargo_pkgs.txt (one entry per line).
-# Eget: uses --system linux/amd64 and excludes static/musl by default. Set EGET_EXTRA e.g. to '--asset .tar' to prefer tarballs only.
+# Package lists: Brewfile (macOS), deb_pkgs.txt, dnf_pkgs.txt, eget_pkgs.txt, go_pkgs.txt, cargo_pkgs.txt.
+# Eget: --system follows OS (linux/* or darwin/*) from uname. Set EGET_EXTRA e.g. to '--asset .tar' to prefer tarballs only.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,6 +20,15 @@ NVIM_CONFIG="${HOME}/.config/nvim"
 
 # Install functions live in dot_bash_functions (sourced below).
 [[ -f "${REPO_ROOT}/dot_bash_functions" ]] && source "${REPO_ROOT}/dot_bash_functions"
+
+# Homebrew only: sync Brewfile + uninstall packages not listed (see sync_homebrew_bundle).
+case "${1:-}" in
+sync-brew | sync-homebrew)
+	export PATH="$BIN_DIR:$PATH"
+	sync_homebrew_bundle "$REPO_ROOT"
+	exit 0
+	;;
+esac
 
 main() {
 	install_log "Ensure $BIN_DIR is on PATH for this script"

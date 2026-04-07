@@ -32,9 +32,9 @@ journal() {
 }
 
 findprocs() {
-    ## just use pgrep? 
-    ps -wef f | grep "$1" 
-    ## TODO 
+    ## just use pgrep? (ps auxww works on Linux procps and BSD/macOS)
+    ps auxww | grep "$1"
+    ## TODO
     #add fn to pass to netstat / give name of proc and show netstat and pgrep
 }
 
@@ -49,8 +49,13 @@ info() {
 
 # Run eget --upgrade-only for eget_pkgs.txt, go-global-update, then topgrade.
 uppies() {
+    if [[ "$(uname -s)" == Darwin ]] && command -v brew &>/dev/null; then
+        brew update && brew upgrade && brew cleanup
+    elif command -v apt-get &>/dev/null; then
+        sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y
+    fi
     local list bin_dir
-    list="${REPO_ROOT:-$HOME/git/dotfiles}/eget_pkgs.txt"
+    list="${REPO_ROOT:-$HOME/.local/share/chezmoi}/eget_pkgs.txt"
     bin_dir="${BIN_DIR:-$HOME/.local/bin}"
     if command -v eget &>/dev/null && [[ -f "$list" ]]; then
         printf '\n[uppies] Eget binaries (--upgrade-only)\n'
@@ -77,8 +82,17 @@ uppies() {
 # --- install-deps helpers and install functions ---
 # Set EGET_SYSTEM from current arch so eget picks the right binary (one candidate, no prompt). Override with EGET_EXTRA if needed.
 set_eget_arch() {
-	local m
+	local os m
+	os="$(uname -s)"
 	m="$(uname -m)"
+	if [[ "$os" == Darwin ]]; then
+		case "$m" in
+			arm64)        EGET_SYSTEM=darwin/arm64 ;;
+			x86_64)       EGET_SYSTEM=darwin/amd64 ;;
+			*)            EGET_SYSTEM=darwin/amd64 ;;
+		esac
+		return
+	fi
 	case "$m" in
 		x86_64)   EGET_SYSTEM=linux/amd64 ;;
 		aarch64|arm64) EGET_SYSTEM=linux/arm64 ;;
@@ -87,6 +101,18 @@ set_eget_arch() {
 		*)        EGET_SYSTEM=linux/amd64 ;;
 	esac
 }
+
+# Portable SHA-256 of a file (macOS has shasum; Linux often has sha256sum).
+sha256_file() {
+	local f="$1"
+	if command -v sha256sum &>/dev/null; then
+		sha256sum -b "$f" | awk '{print $1}'
+	elif command -v shasum &>/dev/null; then
+		shasum -a 256 "$f" | awk '{print $1}'
+	else
+		openssl dgst -sha256 "$f" | awk '{print $2}'
+	fi
+}
 # Expect REPO_ROOT, BIN_DIR, FONT_DIR, NERD_FONTS_VERSION, NVIM_CONFIG, EGET_SHA256 set by caller (e.g. install-deps.sh).
 read_pkgs() {
 	local f="$1"
@@ -94,6 +120,30 @@ read_pkgs() {
 }
 
 install_log() { printf '\n[install-deps] %s\n' "$*"; }
+
+# macOS: brew bundle install, then cleanup --force so only Brewfile entries remain.
+# Set BREW_BUNDLE_SKIP_CLEANUP=1 to keep packages not listed in the Brewfile.
+sync_homebrew_bundle() {
+	local root="${1:-}"
+	[[ -z "$root" ]] && root="${REPO_ROOT:-}"
+	local bf="$root/Brewfile"
+	[[ -f "$bf" ]] || {
+		install_log "No Brewfile at $bf"
+		return 1
+	}
+	command -v brew &>/dev/null || {
+		install_log "brew not found"
+		return 1
+	}
+	install_log "brew bundle install"
+	brew bundle install --file="$bf"
+	if [[ "${BREW_BUNDLE_SKIP_CLEANUP:-}" == "1" ]]; then
+		install_log "BREW_BUNDLE_SKIP_CLEANUP=1: skipping brew bundle cleanup"
+		return 0
+	fi
+	install_log "brew bundle cleanup --force (removes formulae/casks not in Brewfile)"
+	brew bundle cleanup --force --file="$bf"
+}
 
 install_chezmoi() {
 	if command -v chezmoi &>/dev/null; then
@@ -123,7 +173,7 @@ install_eget() {
 	trap "rm -rf '$tmpdir'" RETURN
 	curl -sSL -o "$tmpdir/eget.sh" https://zyedidia.github.io/eget.sh
 	local sum
-	sum="$(sha256sum -b "$tmpdir/eget.sh" | awk '{print $1}')"
+	sum="$(sha256_file "$tmpdir/eget.sh")"
 	if [[ "$sum" != "$EGET_SHA256" ]]; then
 		install_log "eget.sh checksum mismatch (got $sum)"
 		return 1
@@ -138,7 +188,9 @@ install_eget() {
 }
 
 install_system_packages() {
-	if command -v apt-get &>/dev/null; then
+	if [[ "$(uname -s)" == Darwin ]] && command -v brew &>/dev/null; then
+		sync_homebrew_bundle "$REPO_ROOT" || return 1
+	elif command -v apt-get &>/dev/null; then
 		local list="${REPO_ROOT}/deb_pkgs.txt"
 		[[ ! -f "$list" ]] && return 0
 		install_log "Installing system packages (apt) from deb_pkgs.txt"
@@ -164,6 +216,12 @@ install_font() {
 	if fc-list 2>/dev/null | grep -qi "Martian.*Mono"; then
 		install_log "Martian Mono (Nerd) font already present, skipping"
 		return 0
+	fi
+	if [[ "$(uname -s)" == Darwin ]] && command -v brew &>/dev/null; then
+		if brew list --cask font-martian-mono-nerd-font &>/dev/null; then
+			install_log "Martian Mono Nerd font installed via Homebrew cask, skipping download"
+			return 0
+		fi
 	fi
 	if command -v pacman &>/dev/null; then
 		install_log "Installing ttf-martian-mono-nerd (pacman)"
@@ -197,6 +255,10 @@ install_eget_binaries() {
 	while IFS= read -r spec || [[ -n "$spec" ]]; do
 		[[ -z "${spec// }" ]] && continue
 		local name="${spec##*/}"
+		if [[ "$name" == "neovim" ]] && command -v nvim &>/dev/null; then
+			install_log "nvim already on PATH (e.g. Homebrew), skipping eget neovim/neovim"
+			continue
+		fi
 		if [[ -x "$BIN_DIR/$name" ]] || [[ -x "$BIN_DIR/nvim" && "$name" == "neovim" ]]; then
 			install_log "Binary for $spec already present, skipping"
 			continue
@@ -204,10 +266,12 @@ install_eget_binaries() {
 		install_log "eget $spec -> $BIN_DIR"
 		(cd "$(mktemp -d)" && printf '1\n' | eget --system "$EGET_SYSTEM" --to "$BIN_DIR" $EGET_EXTRA "$spec") || true
 	done < <(read_pkgs "$list")
-	if [[ -x /opt/nvim-linux64/bin/nvim ]]; then
-		install_log "Neovim already at /opt/nvim-linux64"
-	elif [[ -d "$BIN_DIR/nvim-linux64" ]]; then
-		sudo mv -f "$BIN_DIR/nvim-linux64" /opt/ 2>/dev/null || true
+	if [[ "$(uname -s)" == Linux ]]; then
+		if [[ -x /opt/nvim-linux64/bin/nvim ]]; then
+			install_log "Neovim already at /opt/nvim-linux64"
+		elif [[ -d "$BIN_DIR/nvim-linux64" ]]; then
+			sudo mv -f "$BIN_DIR/nvim-linux64" /opt/ 2>/dev/null || true
+		fi
 	fi
 }
 
@@ -274,7 +338,13 @@ install_nvchad() {
 }
 
 install_bash_ls() {
-	if command -v snap &>/dev/null && ! command -v bash-language-server &>/dev/null; then
+	if command -v bash-language-server &>/dev/null; then
+		return 0
+	fi
+	if [[ "$(uname -s)" == Darwin ]] && command -v brew &>/dev/null; then
+		install_log "Installing bash-language-server (brew)"
+		brew install bash-language-server 2>/dev/null || true
+	elif command -v snap &>/dev/null; then
 		install_log "Installing bash-language-server (snap)"
 		sudo snap install bash-language-server --classic 2>/dev/null || true
 	fi

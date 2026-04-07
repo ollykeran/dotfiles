@@ -37,6 +37,9 @@ def parse_exports(profile_path: Path) -> list[tuple[str, str]]:
             value = "$HOME/.config/eza"
         if "~" in value:
             value = value.replace("~", "$HOME")
+        # Bash-only or set elsewhere for fish (ssh_agent.fish, starship).
+        if var in ("PS1", "SSH_AUTH_SOCK"):
+            continue
         exports.append((var, value))
     return exports
 
@@ -136,7 +139,7 @@ def write_env_fish(out_path: Path, exports: list[tuple[str, str]], dirs: list[st
     lines.append("")
     # fish_add_path prepends; bash appends. So reverse dir order to get same effective order.
     for d in reversed(dirs):
-        lines.append(f"fish_add_path {d}")
+        lines.append(f"test -d {d}; and fish_add_path {d}")
     out_path.write_text("\n".join(lines) + "\n")
 
 
@@ -156,9 +159,9 @@ def write_abbr_fish(out_path: Path, aliases: list[tuple[str, str]]) -> None:
             lines.append("")
         elif alias_needs_function(value):
             if key == "reset":
-                # Fish equivalent: reapply dotfiles and clear; no bash_profile
+                # No chezmoi apply (avoids install-deps hook); do not pass $argv to clear
                 lines.append(f"function {key} --description 'bash alias: reset'")
-                lines.append("    cd $HOME; chezmoi apply; clear")
+                lines.append("    cd $HOME && clear")
                 lines.append("end")
                 lines.append("")
             else:
@@ -193,8 +196,8 @@ def main() -> int:
     dirs = parse_dirs(args.profile)
     aliases = parse_aliases(args.aliases)
 
-    env_file = args.out_dir / "dotfiles.env.fish"
-    abbr_file = args.out_dir / "dotfiles.abbr.fish"
+    env_file = args.out_dir / "env.fish"
+    abbr_file = args.out_dir / "alias.fish"
 
     write_env_fish(env_file, exports, dirs)
     write_abbr_fish(abbr_file, aliases)
