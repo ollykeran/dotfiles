@@ -14,3 +14,8 @@ fish_config theme choose catppuccin-mocha
 if status is-interactive
   fastfetch 2>/dev/null
 end
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+source ~/.orbstack/shell/init2.fish 2>/dev/null || :
+tirith init --shell fish | source

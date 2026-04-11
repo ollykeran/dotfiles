@@ -18,6 +18,7 @@ eget_pkgs.txt
 go_pkgs.txt
 cargo_pkgs.txt
 chezmoi.toml
+.config/fish/fish_variables
 {{- if ne .chezmoi.os "linux" }}
 .config/systemd
 {{- end }}
