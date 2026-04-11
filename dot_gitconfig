@@ -1,12 +1,12 @@
 [user]
 	name = OllyKeran
 	email = ollykeran@gmail.com
+	signingkey = /Users/kerano/.ssh/id_ed25519.pub
+
 [color]
   ui = auto
 
 [color "branch"]
-
-
   upstream = cyan
 
 [status]
@@ -34,5 +34,12 @@
   wordRegex = .
   submodule = log
   tool = cursor
+
 [difftool "cursor"]
   cmd = cursor --wait --diff $LOCAL $REMOTE
+
+[gpg]
+  format = ssh
+
+[commit]
+	gpgsign = true
